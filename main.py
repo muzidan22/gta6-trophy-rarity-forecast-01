@@ -60,6 +60,8 @@ def run_program(input_dir: Path, output_dir: Path) -> int:
     for path in cases:
         case = json.loads(path.read_text(encoding="utf-8"))
         forecast = fc.forecast_case(case, path.name)
+        # Sanity guard: the Platinum cannot out-earn the rarest base-game trophy.
+        fc.enforce_monotonicity(forecast["trophies"])
         (output_dir / f"{path.stem}.out").write_text(
             json.dumps(forecast, separators=(",", ":")) + "\n", encoding="utf-8"
         )
